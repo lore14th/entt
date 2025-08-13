@@ -28,8 +28,7 @@ public class Entt : TinfoilProjectBase
 		NatvisFiles.Add(@"../natvis/signal.natvis");
 	}
 
-	[Sharpmake.Configure]
-	public void ConfigureAll(Project.Configuration config, TinfoilTarget target)
+	public override void ConfigureProject(Project.Configuration config, TinfoilTarget target)
 	{
 		config.Output = Configuration.OutputType.Utility;
 
