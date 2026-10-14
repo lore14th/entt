@@ -1,41 +1,31 @@
-// Entt Tinfoil build script
+// Tinfoil Engine build script
 
 using Sharpmake;
-using System;
-using System.Collections.Generic;
 using System.IO;
+using TinfoilBuildTool;
 
-[Sharpmake.Generate]
-public class Entt : TinfoilProjectBase
+using Configuration = Sharpmake.Project.Configuration;
+
+[BuildModule(typeof(TinfoilProject))]
+public class Entt : TinfoilThirdPartyModuleDependency
 {
-	public Entt()
+	public Entt(ReadOnlyModuleRules rules) : base(rules)
 	{
-		Name = "Entt";
-		SourceRootPath = @"[project.SharpmakeCsPath]/single_include";
-		AdditionalSourceRootPaths.Add();
-		SourceFiles.Add(@"[project.SharpmakeCsPath]/Entt.Build.cs");
-
-		NatvisFiles.Add(@"../natvis/config.natvis");
-		NatvisFiles.Add(@"../natvis/container.natvis");
-		NatvisFiles.Add(@"../natvis/core.natvis");
-		NatvisFiles.Add(@"../natvis/entity.natvis");
-		NatvisFiles.Add(@"../natvis/graph.natvis");
-		NatvisFiles.Add(@"../natvis/locator.natvis");
-		NatvisFiles.Add(@"../natvis/meta.natvis");
-		NatvisFiles.Add(@"../natvis/poly.natvis");
-		NatvisFiles.Add(@"../natvis/process.natvis");
-		NatvisFiles.Add(@"../natvis/resource.natvis");
-		NatvisFiles.Add(@"../natvis/signal.natvis");
 	}
 
-	public override void ConfigureProject(Project.Configuration config, TinfoilTarget target)
+	public override void InitializeModuleBuildProject(Project project)
 	{
+		base.InitializeModuleBuildProject(project);
+
+		project.SourceRootPath = Path.Combine("[project.SharpmakeCsPath]", "single_include");
+		project.NatvisFiles.AddRange(Directory.EnumerateFiles(Path.Combine(RootDirectory, "natvis")));
+	}
+
+	public override void ConfigureBuild(Configuration config, ITarget target)
+	{
+		base.ConfigureBuild(config, target);
 		config.Output = Configuration.OutputType.Utility;
 
-		config.Options.Add(Options.Vc.Compiler.CppLanguageStandard.CPP17);
-		config.Options.Add(Options.Vc.General.WindowsTargetPlatformVersion.Latest);
-		config.Options.Add(Options.Vc.Librarian.TreatLibWarningAsErrors.Enable);
-
-		config.IncludePaths.Add(@"[project.SharpmakeCsPath]/single_include");
+		config.IncludePaths.Add(Path.Combine("[project.SharpmakeCsPath]", "single_include"));
 	}
 }
